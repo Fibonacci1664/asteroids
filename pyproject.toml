@@ -1,9 +1,68 @@
 [project]
 name = "asteroids"
 version = "0.1.0"
-description = "Add your description here"
+description = "A toy asteroids project as part of the boot.dev learning path"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "pygame==2.6.1",
 ]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "flake8>=7.3.0",
+    "mypy>=1.17.0",
+]
+
+[tool.black]
+line-length = 79
+
+[tool.mypy]
+# Specify which Python version to target for type checking
+python_version = "3.12"
+
+# Warn when a function returns 'Any' type (helps catch untyped returns)
+warn_return_any = true
+
+# Warn about unused mypy configuration options (helps keep config clean)
+warn_unused_configs = true
+
+# Require type annotations on all function definitions
+# Functions must have parameter types AND return types
+disallow_untyped_defs = true
+
+# Disallow functions with some but not all parameters typed
+# Either type everything or nothing (prevents partial typing)
+disallow_incomplete_defs = true
+
+# Type-check the body of functions that don't have type annotations
+# Even if function signature isn't typed, check the body for errors
+check_untyped_defs = true
+
+# Require type annotations on decorators
+# @my_decorator must be properly typed
+disallow_untyped_decorators = true
+
+# Don't automatically make arguments Optional when default is None
+# Must explicitly write Optional[int] instead of just int with None default
+no_implicit_optional = true
+
+# Warn about unnecessary type casts
+# Like writing cast(int, 5) when 5 is already an int
+warn_redundant_casts = true
+
+# Warn about '# type: ignore' comments that aren't needed anymore
+warn_unused_ignores = true
+
+# Warn when a function doesn't return anything but should
+# Catches functions that sometimes forget to return a value
+warn_no_return = true
+
+# Warn about code that can never be reached
+# Like code after a 'return' statement
+warn_unreachable = true
+
+# Use strict equality checking for comparisons
+# Helps catch comparisons between incompatible types
+strict_equality = true
