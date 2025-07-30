@@ -10,9 +10,23 @@ from constants import (
 
 
 def main() -> None:
+    pygame.init()
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
+
+    game_window_size = (SCREEN_WIDTH, SCREEN_HEIGHT)
+    flags = pygame.DOUBLEBUF | pygame.OPENGL | pygame.RESIZABLE
+    screen = pygame.display.set_mode(game_window_size, flags, vsync=1)
+    colour = pygame.Color(0, 0, 0)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+
+        screen.fill(colour)
+        pygame.display.flip()
 
 
 if __name__ == "__main__":

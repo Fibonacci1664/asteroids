@@ -3,4 +3,15 @@ max-line-length = 79
 
 # E203: whitespace before ':' (conflicts with Black's formatting)
 # W503: line break before binary operator (Black prefers this style)
-extend-ignore = E203, W503
+extend-ignore = E203, W503, W293
+
+# Exclude virtual environment and other directories we don't control
+exclude = 
+    .venv,
+    venv,
+    env,
+    __pycache__,
+    .git,
+    .pytest_cache,
+    build,
+    dist
