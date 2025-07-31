@@ -10,10 +10,13 @@ from constants import (
 
 
 def main() -> None:
-    pygame.init()
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
+
+    pygame.init()
+    clock = pygame.time.Clock()
+    dt = 0
 
     game_window_size = (SCREEN_WIDTH, SCREEN_HEIGHT)
     flags = pygame.DOUBLEBUF | pygame.OPENGL | pygame.RESIZABLE
@@ -27,6 +30,8 @@ def main() -> None:
 
         screen.fill(colour)
         pygame.display.flip()
+
+        dt = (clock.tick(60) / 1000)
 
 
 if __name__ == "__main__":
