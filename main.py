@@ -32,12 +32,13 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 return
 
+        dt = clock.tick(60) / 1000
+
         screen.fill(colour)
         # print(f"Player position: {player.position}, radius: {PLAYER_RADIUS}")
+        player.update(dt)
         player.draw(screen)
         pygame.display.flip()
-
-        dt = clock.tick(60) / 1000
 
 
 if __name__ == "__main__":
