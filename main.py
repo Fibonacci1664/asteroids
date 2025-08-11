@@ -22,6 +22,7 @@ def main() -> None:
 
     game_window_size = (SCREEN_WIDTH, SCREEN_HEIGHT)
     screen = pygame.display.set_mode(game_window_size, vsync=1)
+    pygame.display.set_caption("Asteroids")
     colour = pygame.Color(0, 0, 0)
     x = SCREEN_WIDTH / 2
     y = SCREEN_HEIGHT / 2
