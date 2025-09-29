@@ -6,6 +6,7 @@ from constants import (
     PLAYER_SPEED,
     SHOT_RADIUS,
     PLAYER_SHOOT_SPEED,
+    PLAYER_SHOOT_COOLDOWN,
 )
 from circleshape import CircleShape
 from shot import Shot
@@ -31,7 +32,6 @@ class Player(CircleShape):
 
         # For controlling the rate of fire
         self.time_until_next_shot = 0.0  # countdown timer intialisation
-        self.rate_of_fire_delay = 0.25  # rate of fire
 
     def triangle(self) -> list:
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -65,7 +65,7 @@ class Player(CircleShape):
             self.move(-dt)
         if keys[pygame.K_SPACE] and self.time_until_next_shot <= 0.0:
             self.shoot()
-            self.time_until_next_shot = self.rate_of_fire_delay
+            self.time_until_next_shot = PLAYER_SHOOT_COOLDOWN
 
     def move(self, dt: float) -> None:
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
