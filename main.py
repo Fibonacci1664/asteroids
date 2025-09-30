@@ -2,6 +2,7 @@ import pygame
 import sys
 
 from player import Player
+from shot import Shot
 from asteroidfield import AsteroidField
 from constants import (
     SCREEN_HEIGHT,
@@ -49,6 +50,13 @@ def main() -> None:
         updatable.update(dt)
 
         for asteroid in asteroids:
+            for shot in shots:
+                print(type(next(iter(shots))))
+                print(isinstance(shot, Shot))
+                if shot.has_collided(asteroid):
+                    asteroid.kill()
+                    shot.kill()
+
             if player.has_collided(asteroid):
                 print("Game over!")
                 sys.exit()
