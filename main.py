@@ -8,6 +8,12 @@ from constants import (
     SCREEN_WIDTH,
 )
 
+from statemanager import GameState, StateManager
+from inputservice import InputService
+from gui.guimanager import GUIManager
+from gui.guiaction import GUIAction
+from gui.titlescreen import TitleScreen
+
 
 def main() -> None:
     print("Starting Asteroids!")
@@ -21,6 +27,7 @@ def main() -> None:
     game_window_size = (SCREEN_WIDTH, SCREEN_HEIGHT)
     screen = pygame.display.set_mode(game_window_size, vsync=1)
     pygame.display.set_caption("Asteroids")
+
     colour = pygame.Color(0, 0, 0)
     x = SCREEN_WIDTH / 2
     y = SCREEN_HEIGHT / 2
@@ -30,36 +37,73 @@ def main() -> None:
     asteroids: pygame.sprite.Group = pygame.sprite.Group()
     shots: pygame.sprite.Group = pygame.sprite.Group()
 
-    player = Player(x, y, [updatable, drawable], shots)
-    _ = AsteroidField([updatable, drawable, asteroids])
+    def build_world() -> Player:
+        # Rebuild gameplay entities for a clean slate on newgame
+        updatable.empty()
+        drawable.empty()
+        asteroids.empty()
+        shots.empty()
+        player = Player(x, y, [updatable, drawable], shots)
+        _ = AsteroidField([updatable, drawable, asteroids])
+        return player
 
-    # Player.containers = (updatable, drawable)
-    # Asteroid.containers = (updatable, drawable, asteroids)
-    # AsteroidField.containers = updatable
+    # Create an initial gameplay world, this wont update while in TITLE
+    player = build_world()
+
+    # Managers
+    state = StateManager()  # Controls TITLE/PLAYING
+    input_service = InputService()  # Polls events once per frame
+    gui = GUIManager()  # Runs current GUI screen
+    gui.set_screen(TitleScreen(game_window_size))
+
+    # Require a fresh mouse button release after entering TITLE
+    input_service.mouse_up_since_transition = False
 
     while True:
-        for event in pygame.event.get():
+        # Collect all input events exactly once this frame
+        input_service.poll()
+
+        # Handle window close regardless of state
+        for event in input_service.events:
             if event.type == pygame.QUIT:
                 return
 
         dt = clock.tick(60) / 1000
 
-        screen.fill(colour)
-        # print(f"Player position: {player.position}, radius: {PLAYER_RADIUS}")
-        updatable.update(dt)
+        if state.get_state() == GameState.TITLE:
+            # Let GUI process input, possibly requesting state changes
+            action = gui.update(input_service)
 
-        for asteroid in asteroids:
-            for shot in shots:
-                if shot.has_collided(asteroid):
-                    asteroid.split()
-                    shot.kill()
+            # Draw the title screen (bg + button)
+            gui.draw(screen)
 
-            if player.has_collided(asteroid):
-                print("Game over!")
-                sys.exit()
+            # If Play clicked and mouse up after entering TITLE, start game
+            if (
+                action == GUIAction.START_GAME
+                and input_service.mouse_up_since_transition
+            ):
+                player = build_world()
+                state.set_state(GameState.PLAYING)
+                input_service.consume_all()
+                gui.set_screen(None)
+        elif state.get_state() == GameState.PLAYING:
+            # Clear the screen for gameplay rendering
+            screen.fill(colour)
 
-        for sprite in drawable:
-            sprite.draw(screen)
+            updatable.update(dt)
+
+            for asteroid in asteroids:
+                for shot in shots:
+                    if shot.has_collided(asteroid):
+                        asteroid.split()
+                        shot.kill()
+
+                if player.has_collided(asteroid):
+                    print("Game over!")
+                    sys.exit()
+
+            for sprite in drawable:
+                sprite.draw(screen)
 
         pygame.display.flip()
 
